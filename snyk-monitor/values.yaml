@@ -101,6 +101,10 @@ http_proxy:
 https_proxy:
 no_proxy:
 use_keepalive: true
+
+# Whether to use the image pull secret that is used for the workload already
+reuse_image_pullsecrets: true
+
 skip_k8s_jobs:
 
 # Override default (INFO) log level if less verbosity needed
@@ -111,9 +115,9 @@ nodeSelector: {}
 nodeAffinity:
   disableBetaArchNodeSelector: true
   kubernetesIoArch:
-  - amd64
+    - amd64
   kubernetesIoOs:
-  - linux
+    - linux
 
 # Additional labels and annotations for the snyk-monitor Deployment's Pod
 metadata:
@@ -124,7 +128,7 @@ metadata:
 networkPolicy:
   enabled: true
   egress:
-  - {}
+    - {}
 
 # Override the excluded namespaces
 excludedNamespaces:

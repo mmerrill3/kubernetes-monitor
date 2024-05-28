@@ -48,4 +48,5 @@ export interface Config {
   INTEGRATION_API: string;
   MONITOR_VERSION: string;
   NAMESPACE: string;
+  REUSE_IMAGE_PULLSECRETS: boolean;
 }

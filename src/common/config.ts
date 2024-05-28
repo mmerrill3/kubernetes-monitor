@@ -83,5 +83,6 @@ delete process.env['HTTP_PROXY'];
 delete process.env['NO_PROXY'];
 
 config.SKIP_K8S_JOBS = process.env.SKIP_K8S_JOBS === 'true';
+config.REUSE_IMAGE_PULLSECRETS = process.env.REUSE_IMAGE_PULLSECRETS === 'true';
 
 export { config };

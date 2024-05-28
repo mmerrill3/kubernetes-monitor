@@ -1,4 +1,33 @@
 import * as credentials from '../../../src/scanner/images/credentials';
+import { config } from '../../../src/common/config';
+
+describe('Pull Secrets tests', () => {
+
+  beforeAll(() => {
+    config.REUSE_IMAGE_PULLSECRETS = true;
+  });
+
+  afterAll(() => {
+    config.REUSE_IMAGE_PULLSECRETS = false;
+  });
+
+  it('correctly returns image pull secret when found', async () => {
+    const creds = await credentials.getSourceCredentials(
+      "teststring",
+      ["secret1", "secret2"]
+    );
+    expect(creds).toEqual('secret1');
+  });
+
+  it('correctly returns empty image pull secret when not found', async () => {
+    const creds = await credentials.getSourceCredentials(
+      "teststring",
+      undefined
+    );
+    expect(creds).toBeUndefined();
+  });
+
+});
 
 describe('ECR image parsing tests', () => {
   test.concurrent('ecrRegionFromFullImageName()', async () => {

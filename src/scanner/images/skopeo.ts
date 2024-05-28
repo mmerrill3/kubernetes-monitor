@@ -41,8 +41,9 @@ export async function pull(
   destination: string,
   skopeoRepoType: SkopeoRepositoryType,
   workloadName: string,
+  pullSecrets: string[] | undefined,
 ): Promise<ImageDigests> {
-  const creds = await credentials.getSourceCredentials(image);
+  const creds = await credentials.getSourceCredentials(image, pullSecrets);
   const credentialsParameters = getCopyCredentialParameters(creds);
   const certificatesParameters = getCopyCertificatesParameters();
 

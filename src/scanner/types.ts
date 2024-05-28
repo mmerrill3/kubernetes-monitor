@@ -10,3 +10,7 @@ export interface IScanResult {
   pluginResult: LegacyPluginResponse;
   scanResults: ScanResult[];
 }
+
+export type ImageSecrets = {
+  imagePullSecrets: string[];
+};

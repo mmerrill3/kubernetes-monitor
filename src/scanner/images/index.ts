@@ -24,6 +24,7 @@ const statAsync = promisify(stat);
 async function pullImageBySkopeoRepo(
   imageToPull: IPullableImage,
   workloadName: string,
+  pullSecrets: string[] | undefined,
 ): Promise<IPullableImage> {
   // Scan image by digest if exists, other way fallback tag
   const scanId = imageToPull.imageWithDigest ?? imageToPull.imageName;
@@ -32,6 +33,7 @@ async function pullImageBySkopeoRepo(
     imageToPull.fileSystemPath,
     imageToPull.skopeoRepoType,
     workloadName,
+    pullSecrets,
   );
   imageToPull.manifestDigest = manifestDigest;
   imageToPull.indexDigest = indexDigest;
@@ -41,6 +43,7 @@ async function pullImageBySkopeoRepo(
 export async function pullImages(
   images: IPullableImage[],
   workloadName: string,
+  pullSecrets: string[] | undefined,
 ): Promise<IPullableImage[]> {
   const pulledImages: IPullableImage[] = [];
   for (const image of images) {
@@ -48,7 +51,7 @@ export async function pullImages(
       continue;
     }
     try {
-      const pulledImage = await pullImageBySkopeoRepo(image, workloadName);
+      const pulledImage = await pullImageBySkopeoRepo(image, workloadName, pullSecrets);
       pulledImages.push(pulledImage);
     } catch (error) {
       logger.error(

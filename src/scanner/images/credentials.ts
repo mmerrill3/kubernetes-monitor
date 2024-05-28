@@ -2,10 +2,18 @@ import { Buffer } from 'buffer';
 import * as aws from 'aws-sdk';
 
 import { logger } from '../../common/logger';
+import { config } from '../../common/config';
+
 
 export async function getSourceCredentials(
   imageSource: string,
+  pullSecrets: string[] | undefined,
 ): Promise<string | undefined> {
+  if (config.REUSE_IMAGE_PULLSECRETS && pullSecrets !== undefined) {
+    // get the dockerconfig username password from secret
+    // for now, we just need the first pull secret for the spec
+    return pullSecrets[0]
+  }
   if (isEcrSource(imageSource)) {
     const ecrRegion = ecrRegionFromFullImageName(imageSource);
     return getEcrCredentials(ecrRegion);

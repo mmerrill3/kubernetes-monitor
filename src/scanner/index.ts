@@ -22,10 +22,15 @@ import {
   IScanImage,
   SkopeoRepositoryType,
 } from './images/types';
+import { ImageSecrets } from './types'
+
 import {
   getWorkloadAlreadyScanned,
   getWorkloadImageAlreadyScanned,
 } from '../state';
+import { config } from '../common/config';
+import { getNamespacedDockerconfigSecret } from './dockerconfig-secrets'
+
 
 export async function processWorkload(
   workloadMetadata: IWorkload[],
@@ -35,13 +40,31 @@ export async function processWorkload(
   const workloadName = workloadMetadata[0].name;
   const uniqueImages = getUniqueImages(workloadMetadata);
 
+  var pullSecrets: ImageSecrets = {
+    imagePullSecrets: []
+  }
+
+  if (config.REUSE_IMAGE_PULLSECRETS) {
+    pullSecrets =
+      await getNamespacedDockerconfigSecret(
+        workloadMetadata[0].namespace,
+        workloadMetadata[0].imageName,
+        workloadMetadata[0].imagePullSecrets,
+      );
+    logger.debug(
+      { workloadName, imagePullSecrets: pullSecrets },
+      'image pull secrets',
+    );
+  }
+
   logger.info(
     { workloadName, imageCount: uniqueImages.length },
     'pulling unique images',
   );
+
   const imagesWithFileSystemPath = getImagesWithFileSystemPath(uniqueImages);
   const imagePullStartTimestampMs = Date.now();
-  const pulledImages = await pullImages(imagesWithFileSystemPath, workloadName);
+  const pulledImages = await pullImages(imagesWithFileSystemPath, workloadName, pullSecrets.imagePullSecrets);
   const imagePullDurationMs = Date.now() - imagePullStartTimestampMs;
   if (pulledImages.length === 0) {
     logger.info(

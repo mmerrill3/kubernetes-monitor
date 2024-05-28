@@ -156,6 +156,7 @@ export interface IWorkload {
   imageName: string;
   imageId: string;
   cluster: string;
+  imagePullSecrets: string[] | undefined;
   podSpec: V1PodSpec;
 }
 
